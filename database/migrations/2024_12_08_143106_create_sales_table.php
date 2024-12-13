@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('special_prices')->nullable();
             $table->bigInteger('booking_period')->nullable();
             $table->bigInteger('holiday_price')->nullable();
+            $table->foreignId('unit_id')->nullable()->constrained('units')->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -13,24 +13,24 @@ return new class extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
+            $table->enum('type_unit', ['summer_unit', 'hotel_rooms']);
             $table->string('name');
             $table->string('city');
             $table->string('compound');
-            $table->string('location');
-            $table->bigInteger('no_unit');
-            $table->bigInteger('float_unit');
+            $table->string(column: 'location')->nullable();
+            $table->string('no_unit')->nullable();
+            $table->string('float');
             $table->boolean('elevator');
             $table->bigInteger('distance_between_beach_and_unit');
-            $table->boolean('distance_between_beach_unit');
+            $table->enum('distance_between_beach_unit',['foot', 'car']);
             $table->bigInteger('distance_between_pool_and_unit');
-            $table->boolean('distance_between_pool_unit');
+            $table->enum('distance_between_pool_unit', ['foot', 'car']);
             $table->json('Room_amenities');
             $table->date('available_booking_date');
             $table->text('policies_roles');
-            $table->string('unit_price');
-            $table->string('insurance_amount');
-            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
-            $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
+            $table->enum('type_booking', ['direct_booking', 'send_request']);
+            $table->decimal('price', 10 ,2);
+            $table->decimal('insurance_amount', 10 ,2);
             $table->timestamps();
         });
     }

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Request;
 
 class ImageManager{
-    public static function UploadImages($request, $user=null, $post=null)
+    public static function UploadImages($request, $user=null, $unit=null)
     {
     // Implement images upload logic here
         if($request->hasFile('images'))
@@ -13,8 +13,8 @@ class ImageManager{
                 foreach($request->images as $image)
                 {
                     $imageName = self::generateImageName($image);
-                    $path = self::storeImageInLocal($image, $imageName, 'posts');
-                    $post->images()->create([
+                    $path = self::storeImageInLocal($image, $imageName, 'units');
+                    $unit->images()->create([
                         'path'=>$path
                     ]);
                 }
@@ -30,14 +30,30 @@ class ImageManager{
             //update image in database
             $user->update([
                 'image'=>$path
+            ]);
+        }
+    }
+    public static function uploadIdImage($request, $user)
+    {
+        //upload id_image
+        if($request->hasFile('id_image'))
+        {
+            $image = $request->file('id_image');
+            // delete the image from the local
+            self::deleteImageFromLocal($user->id_image);
+            $imageName = self::generateImageName($image);
+            $path = self::storeImageInLocal($image, $imageName, 'ID_IMAGE');
+            //update image in database
+            $user->update([
+                'id_image'=>$path
         ]);
         }
     }
-    public static function deleteImages($post)
+    public static function deleteImages($unit)
     {
-        if ($post->images->count() > 0)
+        if ($unit->images->count() > 0)
         {
-            foreach ($post->images as $image)
+            foreach ($unit->images as $image)
             {
                 self::deleteImageFromLocal($image->path);
                 $image->delete();

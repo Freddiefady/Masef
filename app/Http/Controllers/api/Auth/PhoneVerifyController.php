@@ -29,6 +29,6 @@ class PhoneVerifyController extends Controller
     {
         $user = $request->user();
         $user->notify(new SendOtpNotify());
-        return responseApi(200, 'Verification Code Sent');
+        return responseApi(200, 'Verification Code Sent', $user);
     }
 }

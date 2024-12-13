@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use SebastianBergmann\CodeCoverage\Report\Xml\Unit;
+use app\Models\Units;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sales extends Model
@@ -15,9 +15,13 @@ class Sales extends Model
         'special_prices',
         'booking_period',
         'holiday_price',
+        'unit_id'
     ];
+    public function unit(){
+        return $this->belongsTo(Units::class, 'unit_id');
+    }
 
-    public function units(){
-        return $this->hasMany(Unit::class, 'sale_id');
+    public function rooms(){
+        return $this->hasMany(Rooms::class, 'sale_id',);
     }
 }

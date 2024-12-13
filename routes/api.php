@@ -2,7 +2,11 @@
 
 use App\Http\Controllers\api\Auth\AuthController;
 use App\Http\Controllers\api\Auth\PhoneVerifyController;
+use App\Http\Controllers\api\Auth\ProfileController;
+use App\Http\Controllers\api\RoomsController;
+use App\Http\Controllers\api\unitsController;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserRescource;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,18 +20,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function(){
+    Route::get('/user', function (Request $request) {
+        return UserRescource::make($request->user());
+
+    });
+    Route::put('/user/update', [ProfileController::class, 'updateProfile']);
+    Route::prefix('verify/')->controller(PhoneVerifyController::class)->group(function(){
+        Route::post('/', 'verify');
+        Route::get('resend', 'resend');
+    });
+    Route::apiResource('units', unitsController::class);
+    Route::apiResource('rooms', RoomsController::class);
 });
 
 Route::prefix('account/')->controller(AuthController::class)->group(function(){
     Route::post('register', 'register');
-    Route::post('login', 'login');
-    Route::delete('logout', 'logout');
-    Route::delete('destroy', 'deleteAccount');
-});
-
-Route::prefix('verify/')->middleware('auth:sanctum')->controller(PhoneVerifyController::class)->group(function(){
-    Route::post('/', 'verify');
-    Route::get('login', 'resend');
+    Route::delete('logout', 'logout')->middleware('auth:sanctum');
+    Route::delete('destroy', 'deleteAccount')->middleware('auth:sanctum');
 });

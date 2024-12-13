@@ -11,12 +11,13 @@ class Units extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'type_unit',
         'name',
         'city',
         'compound',
         'location',
         'no_unit',
-        'float_unit',
+        'float',
         'elevator',
         'distance_between_beach_and_unit',
         'distance_between_beach_unit',
@@ -25,18 +26,23 @@ class Units extends Model
         'Room_amenities',
         'available_booking_date',
         'policies_roles',
-        'unit_price',
+        'type_booking',
+        'price',
         'insurance_amount',
-        'room_id',
-        'sale_id',
 ];
 
-    public function room(){
-        return $this->belongsTo(Rooms::class, 'room_id');
+    public function rooms(){
+        return $this->hasMany(Rooms::class, 'unit_id');
+    }
+    public function sales(){
+        return $this->hasMany(Sales::class,'unit_id');
+    }
+    public function images(){
+        return $this->hasMany(media::class, 'unit_id');
     }
 
-    public function sale(){
-        return $this->belongsTo(Sales::class,'sale_id');
-    }
+    protected $casts = [
+        'Room_amenities' => 'array',
+    ];
 }
 

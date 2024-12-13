@@ -8,41 +8,39 @@ use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
 use App\Notifications\SendOtpNotify;
 use App\Utils\ImageManager;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
     public function register(UserRequest $request)
     {
         $request->validated();
-        try{
+        // try{
+        //     DB::beginTransaction();
             $user = User::create([
+                'type' => $request->post('type'),
                 'name' => $request->post('name'),
                 'email' => $request->post('email'),
                 'phone_number' => $request->post('phone_number'),
-                'image' => $request->post('image'),
+                'image'=> $request->post('image') ?? asset('User-Profile-PNG-Image.png'),
             ]);
 
             if (!$user) {
                 return responseApi(404, 'User not found');
             }
 
-            if ($request->hasFile('image')) {
-                if ($request->hasFile('image')) {
-                    ImageManager::UploadImages($request, $user);
-                }
+            if($request->hasFile('image')){
+                ImageManager::UploadImages($request, $user, null);
             }
             $token = $user->createToken('user_token')->plainTextToken;
 
-            $user->notify(new SendOtpNotify());
-
+            // $user->notify(new SendOtpNotify());
+            // DB::commit();
             return responseApi(201, 'User registered successfully', ['token'=>$token]);
-        } catch (\Exception ) {
-            return responseApi(500, 'Internal Server Error');
-        }
-    }
-    public function login(Request $request)
-    {
-        //
+        // } catch (\Exception ) {
+        //     DB::rollBack();
+        //     return responseApi(500, 'Internal Server Error');
+        // }
     }
     public function logout()
     {

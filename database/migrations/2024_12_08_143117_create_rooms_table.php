@@ -20,6 +20,8 @@ return new class extends Migration
             $table->bigInteger('number_of_bathroom')->default(0);
             $table->json('reception');
             $table->json('content_kitchen');
+            $table->foreignId('unit_id')->constrained('units')->onDelete('cascade');
+            $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
             $table->timestamps();
         });
     }
